@@ -112,12 +112,24 @@ def parseinfo(out, size):
     tc = ""
     
     # Get the formatted size string
-    size_line = f"File size                         : {format_size(size)}"
+    size_line = f"File size                                 : {format_size(size)}"
 
     trigger = False
     skip_conformance_errors = False
 
+    lines_to_remove = [
+        "Dialog Normalization",
+        "compr",
+        "dialnorm_Average",
+        "dialnorm_Minimum",
+        "dialnorm_Maximum"
+    ]
+
     for line in out.splitlines():
+        # Check if the line should be removed
+        if any(line.startswith(remove_line) for remove_line in lines_to_remove):
+            continue
+
         for section, emoji in section_dict.items():
             if line.startswith(section):
                 if trigger:
