@@ -38,7 +38,6 @@ async def katbin_paste(text: str) -> str:
     except:
         return "something went wrong while pasting text in katb.in."
         
-
 async def gen_mediainfo(message, link=None, media=None, mmsg=None):
     temp_send = await send_message(message, "<i>Generating MediaInfo...</i>")
     try:
@@ -74,7 +73,6 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
         if len(stdout) != 0:
             tc += parseinfo(stdout, file_size)
 
-        # Paste the MediaInfo output to katb.in
         katb_link = await katbin_paste(tc)
 
     except Exception as e:
@@ -99,21 +97,21 @@ section_dict = {
 
 def parseinfo(out, size):
     tc = ""
-    # Convert size to MB or GB
-    if size >= 1024 * 1024:  # If size is greater than or equal to 1 GB
-        size_line = f"File size                                 : {size / (1024 * 1024):.2f} GB"
-    else:  # If size is less than 1 GB
-        size_line = f"File size                                 : {size / 1024:.2f} MB"
+    if size >= 1024 * 1024:
+        size_value = round(size / (1024 * 1024))
+        size_line = f"File size                                : {size_value} GB"
+    else:
+        size_value = round(size / 1024)
+        size_line = f"File size                                : {size_value} MB"
     
     trigger = False
     skip_conformance_errors = False
 
     for line in out.splitlines():
-        # Check for section headers and format accordingly
         for section, emoji in section_dict.items():
             if line.startswith(section):
                 if trigger:
-                    tc += "\n"  # Close previous section
+                    tc += "\n"
                 tc += f"{emoji} {line.replace('Text', 'Subtitle')}\n"
                 trigger = True
                 skip_conformance_errors = False
@@ -121,19 +119,17 @@ def parseinfo(out, size):
         else:
             if line.startswith("Conformance errors"):
                 skip_conformance_errors = True
-                continue  # Skip this line and move to the next
+                continue
             elif skip_conformance_errors:
-                # If we are skipping conformance errors, check if we hit a new section
                 if any(line.startswith(section) for section in section_dict):
-                    skip_conformance_errors = False  # Stop skipping if we hit a new section
-                    tc += "\n"  # Add a newline before the new section
-                continue  # Skip all lines related to conformance errors
+                    skip_conformance_errors = False
+                    tc += "\n"
+                continue
 
             if line.startswith("File size"):
                 line = size_line
             
-            # Tidy up colon labels
-            line = line.replace(":", " : ")  # Add spaces around colons for uniformity
+            line = line.replace(":", " : ")
             
             if trigger:
                 tc += line + "\n"  
