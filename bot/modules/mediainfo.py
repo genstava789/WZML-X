@@ -112,7 +112,7 @@ def parseinfo(out, size):
     tc = ""
     
     # Get the formatted size string
-    size_line = f"File size                                 : {format_size(size)}"
+    size_line = f"File size                                : {format_size(size)}"
 
     trigger = False
     skip_conformance_errors = False
