@@ -1,6 +1,8 @@
 from os import getcwd, path as ospath
 from re import search
 from shlex import split
+import httpx
+from bs4 import BeautifulSoup
 
 from aiofiles import open as aiopen
 from aiofiles.os import mkdir, path as aiopath, remove as aioremove
