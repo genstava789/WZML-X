@@ -98,6 +98,7 @@ def parseinfo(out, size):
     tc = ""
     size_line = f"File size                                 : {size / (1024 * 1024):.2f} MiB"
     trigger = False
+    skip_conformance_errors = False
 
     for line in out.splitlines():
         # Check for section headers and format accordingly
@@ -107,10 +108,13 @@ def parseinfo(out, size):
                     tc += "\n"  # Close previous section
                 tc += f"{emoji} {line.replace('Text', 'Subtitle')}\n"
                 trigger = True
+                skip_conformance_errors = False
                 break
         else:
             if line.startswith("Conformance errors"):
-                break
+                skip_conformance_errors = True
+            elif skip_conformance_errors and (line.startswith("0x") or line.startswith("General compliance")):
+                continue
             if line.startswith("File size"):
                 line = size_line
             
