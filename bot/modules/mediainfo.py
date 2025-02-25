@@ -96,25 +96,33 @@ section_dict = {
 
 
 def parseinfo(out, size):
-    tc, trigger = "", False
+    tc = ""
     size_line = f"File size                                 : {size / (1024 * 1024):.2f} MiB"
-    for line in out.split("\n"):
+    trigger = False
+
+    for line in out.splitlines():
+        # Check for section headers and format accordingly
         for section, emoji in section_dict.items():
             if line.startswith(section):
+                if trigger:
+                    tc += "</pre><br>"  # Close previous section
+                tc += f"<h4>{emoji} {line.replace('Text', 'Subtitle')}</h4><br><pre>"
                 trigger = True
-                if not line.startswith("General"):
-                    tc += "</pre><br>"
-                tc += f"<h4>{emoji} {line.replace('Text', 'Subtitle')}</h4>"
                 break
-        if line.startswith("File size"):
-                line = size_line
-        if trigger:
-            tc += "<br><pre>"
-            trigger = False
         else:
-            tc += line + "\n"
-    tc += "</pre><br>"
+            if line.startswith("File size"):
+                line = size_line
+            
+            if trigger:
+                tc += line + "\n"  
+            else:
+                tc += line + "\n"
+
+    if trigger:
+        tc += "</pre><br>"
+
     return tc
+	
 
 
 async def mediainfo(_, message):
