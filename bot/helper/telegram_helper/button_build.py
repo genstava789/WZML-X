@@ -56,3 +56,7 @@ class ButtonMaker:
                 menu.append(self.buttons["footer"])
 
         return InlineKeyboardMarkup(menu)
+
+       def reset(self):
+           for key in self.buttons:
+               self.buttons[key].clear()
