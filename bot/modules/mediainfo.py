@@ -1,11 +1,12 @@
 from os import getcwd, path as ospath
-from re import search
 from shlex import split
+from re import search
 from bs4 import BeautifulSoup
 from aiofiles import open as aiopen
 from aiofiles.os import mkdir, path as aiopath, remove as aioremove
 from aiohttp import ClientSession
 import httpx
+import re
 
 from .. import LOGGER
 from ..core.tg_client import TgClient
@@ -36,38 +37,56 @@ async def katbin_paste(text: str) -> str:
     except:
         return "something went wrong while pasting text in katb.in."
         
+section_dict = {
+    "General": "🗒", 
+    "Video": "🎞", 
+    "Audio": "🔊", 
+    "Text": "🔠", 
+    "Menu": "🗃"
+}
+
+def get_readable_size(size_bytes):
+    if size_bytes == 0:
+        return "0 B"
+    units = ['B', 'KB', 'MB', 'GB', 'TB']
+    unit_index = 0
+    while size_bytes >= 1000 and unit_index < len(units)-1:
+        size_bytes /= 1000.0
+        unit_index += 1
+    return f"{size_bytes:.2f} {units[unit_index]}"
+
 async def gen_mediainfo(message, link=None, media=None, mmsg=None):
     temp_send = await send_message(message, "<i>Generating MediaInfo...</i>")
     try:
         path = "mediainfo/"
-        if not await aiopath.isdir(path):
-            await mkdir(path)
+        if not await AsyncPath(path).is_dir():
+            await AsyncPath(path).mkdir()
         file_size = 0
         if link:
-            filename = search(".+/(.+)", link).group(1)
-            des_path = ospath.join(path, filename)
+            filename = re.search(".+/(.+)", link).group(1)
+            des_path = os.path.join(path, filename)
             headers = {
                 "user-agent": "Mozilla/5.0 (Linux; Android 12; 2201116PI) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36"
             }
             async with ClientSession() as session:
                 async with session.get(link, headers=headers) as response:
                     file_size = int(response.headers.get("Content-Length", 0))
-                    async with aiopen(des_path, "wb") as f:
+                    async with AsyncPath(des_path).open("wb") as f:
                         async for chunk in response.content.iter_chunked(10000000):
                             await f.write(chunk)
                             break
         elif media:
-            des_path = ospath.join(path, media.file_name)
+            des_path = os.path.join(path, media.file_name)
             file_size = media.file_size
             if file_size <= 50000000:
-                await mmsg.download(ospath.join(getcwd(), des_path))
+                await mmsg.download(os.path.join(os.getcwd(), des_path))
             else:
                 async for chunk in TgClient.bot.stream_media(media, limit=5):
-                    async with aiopen(des_path, "ab") as f:
+                    async with AsyncPath(des_path).open("ab") as f:
                         await f.write(chunk)
 
         stdout, _, _ = await cmd_exec(split(f'mediainfo "{des_path}"'))
-        tc = f"📌 {ospath.basename(des_path)}\n\n"
+        tc = f"📌 {os.path.basename(des_path)}\n\n"
         if len(stdout) != 0:
             tc += parseinfo(stdout, file_size)
 
@@ -78,7 +97,7 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
         LOGGER.error(e)
         await edit_message(temp_send, f"MediaInfo Stopped due to {str(e)}")
     finally:
-        await aioremove(des_path)
+        await AsyncPath(des_path).unlink()
 
     await temp_send.edit(
         f"<b>MediaInfo:</b>\n\n➲ <b>Link :</b> {katb_link}",
@@ -86,17 +105,9 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
     )
 
 
-section_dict = {
-    "General": "🗒", 
-    "Video": "🎞", 
-    "Audio": "🔊", 
-    "Text": "🔠", 
-    "Menu": "🗃"
-}
-
 def parseinfo(out, size):
     tc = ""
-    size_line = f"File size : {size / (1024 * 1024):.2f} MiB"
+    size_line = f"File size : {get_readable_size(size)}"
     in_conformance_errors = False
 
     for line in out.splitlines():
@@ -125,7 +136,17 @@ def parseinfo(out, size):
         # Process remaining lines
         if line.startswith("File size"):
             tc += f"{size_line}\n"
+        elif line.startswith("Complete name"):
+            key_part, value_part = line.split(':', 1)
+            value_part = value_part.strip()
+            filename = os.path.basename(value_part)
+            line = f"{key_part}: {filename}"
+            tc += f"{line}\n"
         else:
+            # Reformat line to have single space after colon
+            key_part, value_part = line.split(':', 1)
+            value_part = value_part.strip()
+            line = f"{key_part}: {value_part}"
             tc += f"{line}\n"
 
     return tc
