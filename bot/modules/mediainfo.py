@@ -99,15 +99,21 @@ section_dict = {
 
 def parseinfo(out, size):
     tc = ""
-    size_line = f"File size                                 : {size / (1024 * 1024):.2f} MiB"
+    # Convert size to MB or GB
+    if size >= 1024 * 1024:  # If size is greater than or equal to 1 GB
+        size_line = f"File size                                 : {size / (1024 * 1024):.2f} GB"
+    else:  # If size is less than 1 GB
+        size_line = f"File size                                 : {size / 1024:.2f} MB"
+    
     trigger = False
     skip_conformance_errors = False
 
     for line in out.splitlines():
+        # Check for section headers and format accordingly
         for section, emoji in section_dict.items():
             if line.startswith(section):
                 if trigger:
-                    tc += "\n"
+                    tc += "\n"  # Close previous section
                 tc += f"{emoji} {line.replace('Text', 'Subtitle')}\n"
                 trigger = True
                 skip_conformance_errors = False
@@ -115,15 +121,19 @@ def parseinfo(out, size):
         else:
             if line.startswith("Conformance errors"):
                 skip_conformance_errors = True
-                continue
+                continue  # Skip this line and move to the next
             elif skip_conformance_errors:
+                # If we are skipping conformance errors, check if we hit a new section
                 if any(line.startswith(section) for section in section_dict):
-                    skip_conformance_errors = False
-                    tc += "\n"
-                continue
+                    skip_conformance_errors = False  # Stop skipping if we hit a new section
+                    tc += "\n"  # Add a newline before the new section
+                continue  # Skip all lines related to conformance errors
 
             if line.startswith("File size"):
                 line = size_line
+            
+            # Tidy up colon labels
+            line = line.replace(":", " : ")  # Add spaces around colons for uniformity
             
             if trigger:
                 tc += line + "\n"  
