@@ -41,7 +41,7 @@ async def katbin_paste(text: str) -> str:
 async def gen_mediainfo(message, link=None, media=None, mmsg=None):
     temp_send = await send_message(message, "<i>Generating MediaInfo...</i>")
     try:
-        path = "mediainfo/"
+        path = ""
         if not await aiopath.isdir(path):
             await mkdir(path)
         file_size = 0
@@ -98,12 +98,12 @@ section_dict = {
 def parseinfo(out, size):
     tc = ""
     if size >= 1024 * 1024:
-        size_value = round(size / (1024 * 1024), 1)  # Convert to TB and round to 1 decimal place
-        size_line = f"File size                               : {str(size_value).replace('.', ',')} TB"
+        size_value = round(size / (1024 * 1024), 1)
+        size_line = f"File size : {size_value} GB"
     else:
-        size_value = round(size / 1024, 1)  # Convert to GB and round to 1 decimal place
-        size_line = f"File size                               : {str(size_value).replace('.', ',')} GB"
-    
+        size_value = round(size / 1024, 1)
+        size_line = f"File size : {size_value} MB"
+
     trigger = False
     skip_conformance_errors = False
 
