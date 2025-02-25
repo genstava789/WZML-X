@@ -114,14 +114,11 @@ def tidy_label(line):
 
 def parseinfo(out, size):
     tc = ""
-    
-    # Get the formatted size string
-    size_line = f"File size                                 : {format_size(size)}"
+    size_line = f"File size                                : {format_size(size)}"
 
     trigger = False
     skip_conformance_errors = False
 
-    # Lines to be removed from the output
     lines_to_remove = [
         "Dialog Normalization",
         "compr",
@@ -131,7 +128,6 @@ def parseinfo(out, size):
     ]
 
     for line in out.splitlines():
-        # Check if the line should be removed
         if any(line.startswith(remove_line) for remove_line in lines_to_remove):
             continue
 
@@ -156,7 +152,6 @@ def parseinfo(out, size):
             if line.startswith("File size"):
                 line = size_line
             
-            # Tidy up the label
             line = tidy_label(line)
             
             if trigger:
