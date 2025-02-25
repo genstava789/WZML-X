@@ -98,11 +98,11 @@ section_dict = {
 def parseinfo(out, size):
     tc = ""
     if size >= 1024 * 1024:
-        size_value = round(size / (1024 * 1024))
-        size_line = f"File size                                : {size_value} GB"
+        size_value = round(size / (1024 * 1024), 1)  # Convert to TB and round to 1 decimal place
+        size_line = f"File size                               : {str(size_value).replace('.', ',')} TB"
     else:
-        size_value = round(size / 1024)
-        size_line = f"File size                                : {size_value} MB"
+        size_value = round(size / 1024, 1)  # Convert to GB and round to 1 decimal place
+        size_line = f"File size                               : {str(size_value).replace('.', ',')} GB"
     
     trigger = False
     skip_conformance_errors = False
