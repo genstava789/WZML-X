@@ -96,35 +96,37 @@ section_dict = {
 
 def parseinfo(out, size):
     tc = ""
-    size_line = f"File size                                 : {size / (1024 * 1024):.2f} MiB"
-    trigger = False
-    skip_conformance_errors = False
+    size_line = f"File size : {size / (1024 * 1024):.2f} MiB"
+    in_conformance_errors = False
 
     for line in out.splitlines():
-        # Check for section headers and format accordingly
+        # Check for section headers
+        section_found = False
         for section, emoji in section_dict.items():
             if line.startswith(section):
-                if trigger:
-                    tc += "\n"  # Close previous section
+                in_conformance_errors = False  # Reset when new section found
+                if tc:  # Add newline between sections
+                    tc += "\n"
                 tc += f"{emoji} {line.replace('Text', 'Subtitle')}\n"
-                trigger = True
-                skip_conformance_errors = False
+                section_found = True
                 break
+        
+        if section_found:
+            continue
+        
+        # Handle Conformance errors section
+        if line.startswith("Conformance errors"):
+            in_conformance_errors = True
+            continue
+        
+        if in_conformance_errors:
+            continue  # Skip all lines in Conformance errors section
+        
+        # Process remaining lines
+        if line.startswith("File size"):
+            tc += f"{size_line}\n"
         else:
-            if line.startswith("Conformance errors"):
-                skip_conformance_errors = True
-            elif skip_conformance_errors and (line.startswith("0x") or line.startswith("General compliance")):
-                continue
-            if line.startswith("File size"):
-                line = size_line
-            
-            if trigger:
-                tc += line + "\n"  
-            else:
-                tc += line + "\n"
-
-    if trigger:
-        tc += "\n"
+            tc += f"{line}\n"
 
     return tc
 
