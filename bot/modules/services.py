@@ -88,7 +88,7 @@ Type /{BotCommands.HelpCommand[0]} to get a list of available commands
     else:
         await send_message(
             message,
-            "You Are not authorized to use the bot!",
+            "<b>You Are not authorized to use the bot!</b>",
             reply_markup,
         )
     await database.set_pm_users(userid)
