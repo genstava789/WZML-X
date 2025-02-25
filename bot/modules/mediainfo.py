@@ -104,11 +104,10 @@ def parseinfo(out, size):
     skip_conformance_errors = False
 
     for line in out.splitlines():
-        # Check for section headers and format accordingly
         for section, emoji in section_dict.items():
             if line.startswith(section):
                 if trigger:
-                    tc += "\n"  # Close previous section
+                    tc += "\n"
                 tc += f"{emoji} {line.replace('Text', 'Subtitle')}\n"
                 trigger = True
                 skip_conformance_errors = False
@@ -116,8 +115,13 @@ def parseinfo(out, size):
         else:
             if line.startswith("Conformance errors"):
                 skip_conformance_errors = True
-            elif skip_conformance_errors and (line.startswith("0x") or line.startswith("General compliance")):
                 continue
+            elif skip_conformance_errors:
+                if any(line.startswith(section) for section in section_dict):
+                    skip_conformance_errors = False
+                    tc += "\n"
+                continue
+
             if line.startswith("File size"):
                 line = size_line
             
@@ -130,7 +134,6 @@ def parseinfo(out, size):
         tc += "\n"
 
     return tc
-
 
 async def mediainfo(_, message):
     rply = message.reply_to_message
