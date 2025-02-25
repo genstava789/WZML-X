@@ -108,15 +108,20 @@ def format_size(size):
 
     return f"{round(size, 1)} {units[index]}"
 
+def tidy_label(line):
+	
+    return line.replace(" :", ":").replace(": ", ": ")
+
 def parseinfo(out, size):
     tc = ""
     
     # Get the formatted size string
-    size_line = f"File size                                : {format_size(size)}"
+    size_line = f"File size                                 : {format_size(size)}"
 
     trigger = False
     skip_conformance_errors = False
 
+    # Lines to be removed from the output
     lines_to_remove = [
         "Dialog Normalization",
         "compr",
@@ -151,7 +156,8 @@ def parseinfo(out, size):
             if line.startswith("File size"):
                 line = size_line
             
-            line = line.replace(":", " : ")
+            # Tidy up the label
+            line = tidy_label(line)
             
             if trigger:
                 tc += line + "\n"  
