@@ -31,7 +31,7 @@ async def start(_, message):
     userid = message.from_user.id
     buttons = ButtonMaker()
     buttons.url_button("Owner", "https://t.me/nonplayablcharacter")
-    buttons.build_menu(2)
+    reply_markup = buttons.build_menu(2)
 
     if len(message.command) > 1 and message.command[1] == "wzmlx":
         await delete_message(message)
