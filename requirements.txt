@@ -2,6 +2,7 @@ asyncio
 aiofiles
 beautifulsoup4
 aiohttp
+aiopath
 aioshutil
 anytree
 apscheduler
