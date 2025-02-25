@@ -35,7 +35,7 @@ async def katbin_paste(text: str) -> str:
 
     except:
         return "something went wrong while pasting text in katb.in."
-        
+
 async def gen_mediainfo(message, link=None, media=None, mmsg=None):
     temp_send = await send_message(message, "<i>Generating MediaInfo...</i>")
     try:
@@ -65,21 +65,26 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
                 async for chunk in TgClient.bot.stream_media(media, limit=5):
                     async with aiopen(des_path, "ab") as f:
                         await f.write(chunk)
+
         stdout, _, _ = await cmd_exec(split(f'mediainfo "{des_path}"'))
         tc = f"<h4>📌 {ospath.basename(des_path)}</h4><br><br>"
         if len(stdout) != 0:
             tc += parseinfo(stdout, file_size)
+
+        # Paste the MediaInfo output to katb.in
+        katb_link = await katbin_paste(tc)
+
     except Exception as e:
         LOGGER.error(e)
         await edit_message(temp_send, f"MediaInfo Stopped due to {str(e)}")
     finally:
         await aioremove(des_path)
-    link_id = (await telegraph.create_page(title="MediaInfo X", content=tc))["path"]
+
     await temp_send.edit(
-        f"<b>MediaInfo:</b>\n\n➲ <b>Link :</b> https://katb.in/{link_id}",
+        f"<b>MediaInfo:</b>\n\n➲ <b>Link :</b> {katb_link}",
         disable_web_page_preview=False,
     )
-
+        
 
 section_dict = {
     "General": "🗒", 
