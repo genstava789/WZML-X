@@ -18,6 +18,7 @@ httpx
 langcodes
 jinja2
 lxml
+speedtest
 motor
 natsort
 par2cmdline-turbo
