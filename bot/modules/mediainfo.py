@@ -94,7 +94,6 @@ section_dict = {
     "Menu": "🗃"
 }
 
-
 def parseinfo(out, size):
     tc = ""
     size_line = f"File size                                 : {size / (1024 * 1024):.2f} MiB"
@@ -110,6 +109,8 @@ def parseinfo(out, size):
                 trigger = True
                 break
         else:
+            if line.startswith("Conformance errors"):
+                break
             if line.startswith("File size"):
                 line = size_line
             
