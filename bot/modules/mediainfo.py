@@ -95,14 +95,24 @@ section_dict = {
     "Menu": "🗃"
 }
 
+def format_size(size):
+    if size < 0:
+        return "Invalid size"
+    
+    units = ["bytes", "KB", "MB", "GB", "TB"]
+    index = 0
+
+    while size >= 1024 and index < len(units) - 1:
+        size /= 1024.0
+        index += 1
+
+    return f"{round(size, 1)} {units[index]}"
+
 def parseinfo(out, size):
     tc = ""
-    if size >= 1024 * 1024:
-        size_value = round(size / (1024 * 1024), 1)
-        size_line = f"File size : {size_value} GB"
-    else:
-        size_value = round(size / 1024, 1)
-        size_line = f"File size : {size_value} MB"
+    
+    # Get the formatted size string
+    size_line = f"File size                         : {format_size(size)}"
 
     trigger = False
     skip_conformance_errors = False
