@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from aiofiles import open as aiopen
 from aiofiles.os import mkdir, path as aiopath, remove as aioremove
 from aiohttp import ClientSession
+from aiopath import AsyncPath
 import httpx
 import re
 
