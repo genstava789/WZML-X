@@ -113,9 +113,8 @@ def parseinfo(out, size):
         else:
             if line.startswith("Conformance errors"):
                 skip_conformance_errors = True
-                continue  
-            if skip_conformance_errors and (line.startswith("0x") or line.startswith("General compliance")):
-                continue  
+            elif skip_conformance_errors and (line.startswith("0x") or line.startswith("General compliance")):
+                continue
             if line.startswith("File size"):
                 line = size_line
             
