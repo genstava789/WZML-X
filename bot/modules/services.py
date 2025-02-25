@@ -30,8 +30,8 @@ from ..helper.telegram_helper.message_utils import (
 async def start(_, message):
     userid = message.from_user.id
     buttons = ButtonMaker()
-    buttons.ubutton("Owner", "https://t.me/nonplayablcharacter")
-    reply_markup = buttons.build_menu(2)
+    buttons.url_button("Owner", "https://t.me/nonplayablcharacter")
+    buttons.build_menu(2)
 
     if len(message.command) > 1 and message.command[1] == "wzmlx":
         await delete_message(message)
