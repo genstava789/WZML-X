@@ -41,7 +41,7 @@ async def katbin_paste(text: str) -> str:
 async def gen_mediainfo(message, link=None, media=None, mmsg=None):
     temp_send = await send_message(message, "<i>Generating MediaInfo...</i>")
     try:
-        path = ""
+        path = "mediainfo/"
         if not await aiopath.isdir(path):
             await mkdir(path)
         file_size = 0
