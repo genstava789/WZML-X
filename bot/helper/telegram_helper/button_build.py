@@ -28,12 +28,10 @@ class ButtonMaker:
         )
 
     def build_menu(self, b_cols=1, h_cols=8, f_cols=8):
-        # Create the main button menu
         menu = [
             self.buttons["default"][i: i + b_cols] for i in range(0, len(self.buttons["default"]), b_cols)
         ]
 
-        # Handle header buttons
         if self.buttons["header"]:
             h_cnt = len(self.buttons["header"])
             if h_cnt > h_cols:
@@ -45,7 +43,6 @@ class ButtonMaker:
             else:
                 menu.insert(0, self.buttons["header"])
 
-        # Handle footer buttons
         if self.buttons["footer"]:
             if len(self.buttons["footer"]) > f_cols:
                 [
@@ -57,6 +54,7 @@ class ButtonMaker:
 
         return InlineKeyboardMarkup(menu)
 
-       def reset(self):
-           for key in self.buttons:
-               self.buttons[key].clear()
+    def reset(self):
+        """Reset all button collections to an empty state."""
+        for key in self.buttons:
+            self.buttons[key].clear()
