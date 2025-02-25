@@ -67,7 +67,7 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
                         await f.write(chunk)
 
         stdout, _, _ = await cmd_exec(split(f'mediainfo "{des_path}"'))
-        tc = f"<h4>📌 {ospath.basename(des_path)}</h4><br><br>"
+        tc = f"📌 {ospath.basename(des_path)}\n\n"
         if len(stdout) != 0:
             tc += parseinfo(stdout, file_size)
 
@@ -84,7 +84,7 @@ async def gen_mediainfo(message, link=None, media=None, mmsg=None):
         f"<b>MediaInfo:</b>\n\n➲ <b>Link :</b> {katb_link}",
         disable_web_page_preview=False,
     )
-        
+
 
 section_dict = {
     "General": "🗒", 
@@ -105,8 +105,8 @@ def parseinfo(out, size):
         for section, emoji in section_dict.items():
             if line.startswith(section):
                 if trigger:
-                    tc += "</pre><br>"  # Close previous section
-                tc += f"<h4>{emoji} {line.replace('Text', 'Subtitle')}</h4><br><pre>"
+                    tc += "\n"  # Close previous section
+                tc += f"{emoji} {line.replace('Text', 'Subtitle')}\n"
                 trigger = True
                 break
         else:
@@ -119,10 +119,9 @@ def parseinfo(out, size):
                 tc += line + "\n"
 
     if trigger:
-        tc += "</pre><br>"
+        tc += "\n"
 
     return tc
-	
 
 
 async def mediainfo(_, message):
