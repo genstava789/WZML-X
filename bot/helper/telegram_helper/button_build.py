@@ -12,12 +12,13 @@ class ButtonMaker:
         }
 
     def ubutton(self, key, link, position=None):
+        button = InlineKeyboardButton(text=key, url=link)
         if not position:
-            self.buttons.append(InlineKeyboardButton(text=key, url=link))
+            self.buttons["default"].append(button)
         elif position == "header":
-            self.header_buttons.append(InlineKeyboardButton(text=key, url=link))
+            self.buttons["header"].append(button)
         elif position == "footer":
-            self.footer_buttons.append(InlineKeyboardButton(text=key, url=link))
+            self.buttons["footer"].append(button)
 
     def url_button(self, key, link, position=None):
         self.buttons[position if position in self.buttons else "default"].append(
