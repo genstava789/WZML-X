@@ -1,7 +1,6 @@
 from os import getcwd, path as ospath
 from re import search
 from shlex import split
-from httpx import httpx
 from bs4 import BeautifulSoup
 
 from aiofiles import open as aiopen
