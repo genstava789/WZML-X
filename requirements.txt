@@ -1,6 +1,6 @@
 asyncio
 aiofiles
-BeautifulSoup
+beautifulsoup4
 aiohttp
 aioshutil
 anytree
