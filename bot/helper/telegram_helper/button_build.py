@@ -31,15 +31,15 @@ class ButtonMaker:
         )
 
     def build_menu(self, b_cols=2, h_cols=8, fb_cols=2, lb_cols=2, f_cols=8):
-    chunk = lambda lst, n: [lst[i : i + n] for i in range(0, len(lst), n)]
-    menu = chunk(self.buttons["default"], b_cols)
-    menu = (
-        chunk(self.buttons["header"], h_cols) if self.buttons["header"] else []
-    ) + menu
-    for key, cols in (("f_body", fb_cols), ("l_body", lb_cols), ("footer", f_cols)):
-        if self.buttons[key]:
-            menu += chunk(self.buttons[key], cols)
-    return InlineKeyboardMarkup(menu)
+        chunk = lambda lst, n: [lst[i: i + n] for i in range(0, len(lst), n)]
+        menu = chunk(self.buttons["default"], b_cols)
+        menu = (
+            chunk(self.buttons["header"], h_cols) if self.buttons["header"] else []
+        ) + menu
+        for key, cols in (("f_body", fb_cols), ("l_body", lb_cols), ("footer", f_cols)):
+            if self.buttons[key]:
+                menu += chunk(self.buttons[key], cols)
+        return InlineKeyboardMarkup(menu)
 
     def reset(self):
         for key in self.buttons:
