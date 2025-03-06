@@ -868,15 +868,15 @@ def sharer_scraper(url):
             "ERROR: Drive Link not found, Try in your broswer"
         )
     if "drive.google.com" in res["url"] or "drive.usercontent.google.com" in res["url"]:
+    if "drive.google.com" in res["url"] or "drive.usercontent.google.com" in res["url"]:
         return res["url"]
     try:
         res = cget("GET", res["url"])
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}") from e
-    if (drive_link := HTML(res.text).xpath("//a[contains(@class,'btn')]/@href")) and (
-        "drive.google.com" in drive_link[0]
-        or "drive.usercontent.google.com" in drive_link[0]
-    ):
+    if (
+        drive_link := HTML(res.text).xpath("//a[contains(@class,'btn')]/@href")
+    ) and ("drive.google.com" in drive_link[0] or "drive.usercontent.google.com" in drive_link[0]):
         return drive_link[0]
     else:
         raise DirectDownloadLinkException(
