@@ -81,6 +81,8 @@ def direct_link_generator(link):
         return swisstransfer(link)
     elif "instagram.com" in domain:
         return instagram(link)
+    elif "instagram.com" in domain:
+        return instagram(link)
     elif any(x in domain for x in ["akmfiles.com", "akmfls.xyz"]):
         return akmfiles(link)
     elif any(
@@ -1890,8 +1892,6 @@ def swisstransfer(link):
         "total_size": total_size,
         "header": "User-Agent:Mozilla/5.0",
     }
-
-
 def instagram(link: str) -> str:
     """
     Fetches the direct video download URL from an Instagram post.
@@ -1905,12 +1905,16 @@ def instagram(link: str) -> str:
     Raises:
         DirectDownloadLinkException: If any error occurs during the process.
     """
-    api_url = Config.INSTADL_API or "https://instagramcdn.vercel.app"
-    full_url = f"{api_url}/api/video?postUrl={link}"
+    if not Config.INSTADL_API:
+        raise DirectDownloadLinkException(
+            f"ERROR: Instagram downloader API not added, Try ytdl commands"
+        )
+    full_url = f"{Config.INSTADL_API}/api/video?postUrl={link}"
 
     try:
         response = get(full_url)
         response.raise_for_status()
+
         data = response.json()
 
         if (
