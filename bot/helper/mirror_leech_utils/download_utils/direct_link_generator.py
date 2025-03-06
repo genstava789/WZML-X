@@ -33,8 +33,6 @@ def direct_link_generator(link):
         return yandex_disk(link)
     elif "buzzheavier.com" in domain:
         return buzzheavier(link)
-    elif "devuploads" in domain:
-        return devuploads(link)
     elif "fuckingfast.co" in domain:
         return fuckingfast_dl(link)
     elif "mediafire.com" in domain:
