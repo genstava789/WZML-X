@@ -868,7 +868,6 @@ def sharer_scraper(url):
             "ERROR: Drive Link not found, Try in your broswer"
         )
     if "drive.google.com" in res["url"] or "drive.usercontent.google.com" in res["url"]:
-    if "drive.google.com" in res["url"] or "drive.usercontent.google.com" in res["url"]:
         return res["url"]
     try:
         res = cget("GET", res["url"])
