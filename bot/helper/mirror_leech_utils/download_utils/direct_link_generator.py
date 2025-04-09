@@ -873,9 +873,10 @@ def sharer_scraper(url):
         res = cget("GET", res["url"])
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}") from e
-    if (
-        drive_link := HTML(res.text).xpath("//a[contains(@class,'btn')]/@href")
-    ) and ("drive.google.com" in drive_link[0] or "drive.usercontent.google.com" in drive_link[0]):
+    if (drive_link := HTML(res.text).xpath("//a[contains(@class,'btn')]/@href")) and (
+        "drive.google.com" in drive_link[0]
+        or "drive.usercontent.google.com" in drive_link[0]
+    ):
         return drive_link[0]
     else:
         raise DirectDownloadLinkException(
@@ -1891,6 +1892,8 @@ def swisstransfer(link):
         "total_size": total_size,
         "header": "User-Agent:Mozilla/5.0",
     }
+
+
 def instagram(link: str) -> str:
     """
     Fetches the direct video download URL from an Instagram post.
@@ -1904,18 +1907,18 @@ def instagram(link: str) -> str:
     Raises:
         DirectDownloadLinkException: If any error occurs during the process.
     """
-    api_url = Config.INSTADL_API or 'https://instagramcdn.vercel.app'
+    api_url = Config.INSTADL_API or "https://instagramcdn.vercel.app"
     full_url = f"{api_url}/api/video?postUrl={link}"
-    
+
     try:
         response = get(full_url)
         response.raise_for_status()
         data = response.json()
 
         if (
-            data.get("status") == "success" and
-            "data" in data and
-            "videoUrl" in data["data"]
+            data.get("status") == "success"
+            and "data" in data
+            and "videoUrl" in data["data"]
         ):
             return data["data"]["videoUrl"]
 
