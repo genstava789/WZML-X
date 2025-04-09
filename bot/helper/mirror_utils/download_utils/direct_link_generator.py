@@ -179,6 +179,19 @@ def direct_link_generator(link):
         return sbembed(link)
     elif is_index_link(link) and link.endswith('/'):
         return gd_index(link, auth)
+
+    elif any(
+        x in domain
+        for x in [
+            "database.db-seikel.workers.dev",
+            "database.seikel.itunesmusicid.com",
+            "database.seikel.workers.dev",
+            "seikel.adventure.workers.dev",
+            "database.s3cr3t.workers.dev",
+            "kiki-falling.mord.workers.dev",
+        ]
+    ):
+        return index(link)
     elif is_share_link(link):
         if 'gdtot' in domain:
             return gdtot(link)
@@ -193,7 +206,41 @@ def direct_link_generator(link):
     else:
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
 
+def index(url: str) -> str:
+    """
+    Source :
+    https://github.com/arakurumi/mltb-heroku
 
+    Supported Sites :
+    All Index sites based on Bhadoo (Tested on https://database.seikel.workers.dev/)
+    """
+    if "?a=view" not in url:
+        url = url + "?a=view"
+
+    path = urlparse(url).path
+    scheme = urlparse(url).scheme
+    domain = urlparse(url).hostname
+
+    if len(path) == 0:
+        raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
+
+    if path.endswith("/"):
+        raise DirectDownloadLinkException("ERROR: Tidak support Folder!\nGo away, Abuser :D")
+
+    r = post(
+        url=url,
+        headers={
+            "Referer": url,
+        }
+    )
+
+    if not r.ok:
+        raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
+
+    data = r.json()
+
+    return scheme + "://" + domain + data["link"]
+    
 def real_debrid(url: str, tor=False):
     """ Real-Debrid Link Extractor (VPN Maybe Needed)
     Based on Real-Debrid v1 API (Heroku/VPS) [Without VPN]"""
