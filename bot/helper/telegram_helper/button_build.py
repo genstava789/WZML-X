@@ -17,18 +17,31 @@ class ButtonMaker:
         position = position if position in self.buttons else "default"
         self.buttons[position].append(InlineKeyboardButton(text=key, callback_data=data))
 
-    def build_menu(self, b_cols=1, h_cols=8, fb_cols=2, lb_cols=2, f_cols=8):
-        chunk = lambda lst, n: [
-            lst[i : i + n] for i in range(0, len(lst), n)
-        ]  # noqa: E731
-        menu = chunk(self.buttons["default"], b_cols)
-        menu = (
-            chunk(self.buttons["header"], h_cols) if self.buttons["header"] else []
-        ) + menu
-        for key, cols in (("f_body", fb_cols), ("l_body", lb_cols), ("footer", f_cols)):
-            if self.buttons[key]:
-                menu += chunk(self.buttons[key], cols)
-        return InlineKeyboardMarkup(menu)
+    def build_menu(self, b_cols=1, h_cols=8, f_cols=8):
+         menu = [
+             self.buttons["default"][i: i + b_cols] for i in range(0, len(self.buttons["default"]), b_cols)
+         ]
+         
+         if self.buttons["header"]:
+             h_cnt = len(self.buttons["header"])
+             if h_cnt > h_cols:
+                 header_buttons = [
+                     self.buttons["header"][i: i + h_cols]
+                     for i in range(0, len(self.buttons["header"]), h_cols)
+                 ]
+                 menu = header_buttons + menu
+             else:
+                 menu.insert(0, self.buttons["header"])
+         
+         if self.buttons["footer"]:
+             if len(self.buttons["footer"]) > f_cols:
+                 [
+                     menu.append(self.buttons["footer"][i: i + f_cols])
+                     for i in range(0, len(self.buttons["footer"]), f_cols)
+                 ]
+             else:
+                 menu.append(self.buttons["footer"])
+         
 
     def reset(self):
         self.buttons = {
