@@ -383,7 +383,7 @@ class TaskListener(TaskConfig):
         ):
             await database.rm_complete_task(self.message.link)
         msg = (
-            f"<b><i>{escape(self.name)}</i></b>\n│"
+            f"<blackquote><code>{escape(self.name)}</code></blackquote>\n│"
             f"\n┟ <b>Task Size</b> → {get_readable_file_size(self.size)}"
             f"\n┠ <b>Time Taken</b> → {get_readable_time(time() - self.message.date.timestamp())}"
             f"\n┠ <b>In Mode</b> → {self.mode[0]}"
@@ -465,9 +465,9 @@ class TaskListener(TaskConfig):
                 buttons = ButtonMaker()
                 if link and Config.SHOW_CLOUD_LINK:
                     buttons.url_button("☁️ Cloud Link", link)
-                else:
-                    msg += f"\n\nPath: <code>{rclone_path}</code>"
+        
                 if rclone_path and Config.RCLONE_SERVE_URL and not self.private_link:
+                    msg += f"\n\nPath: <code>{rclone_path}</code>"
                     remote, rpath = rclone_path.split(":", 1)
                     url_path = rutils.quote(f"{rpath}")
                     share_url = f"{Config.RCLONE_SERVE_URL}/{remote}/{url_path}"
@@ -490,6 +490,7 @@ class TaskListener(TaskConfig):
             else:
                 msg += f"\n┃\n┠ Path: <code>{rclone_path}</code>"
                 button = None
+            msg += f"\n┃\n┠ Path: <code>{rclone_path}</code>"
             msg += f"\n┃\n┖ <b>Task By</b> → {self.tag}\n\n"
             group_msg = (
                 msg + "〶 <b><u>Action Performed :</u></b>\n"
