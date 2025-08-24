@@ -383,23 +383,23 @@ class TaskListener(TaskConfig):
         ):
             await database.rm_complete_task(self.message.link)
         msg = (
-            f"<blackquote><code>{escape(self.name)}</code></blackquote>\n│"
-            f"\n┟ <b>Task Size</b> → {get_readable_file_size(self.size)}"
-            f"\n┠ <b>Time Taken</b> → {get_readable_time(time() - self.message.date.timestamp())}"
-            f"\n┠ <b>In Mode</b> → {self.mode[0]}"
-            f"\n┠ <b>Out Mode</b> → {self.mode[1]}"
+            f"<code>{escape(self.name)}</code>\n"
+            f"\n<b>Task Size</b> → {get_readable_file_size(self.size)}"
+            f"\n<b>Time Taken</b> → {get_readable_time(time() - self.message.date.timestamp())}"
+            f"\n<b>In Mode</b> → {self.mode[0]}"
+            f"\n<b>Out Mode</b> → {self.mode[1]}"
         )
         LOGGER.info(f"Task Done: {self.name}")
         if self.is_yt:
             buttons = ButtonMaker()
             if mime_type == "Folder/Playlist":
-                msg += "\n┠ <b>Type</b> → Playlist"
-                msg += f"\n┖ <b>Total Videos</b> → {files}"
+                msg += "\n<b>Type</b> → Playlist"
+                msg += f"\n<b>Total Videos</b> → {files}"
                 if link:
                     buttons.url_button("🔗 View Playlist", link)
                 user_message = f"{self.tag}\nYour playlist ({files} videos) has been uploaded to YouTube successfully!"
             else:
-                msg += "\n┖ <b>Type</b> → Video"
+                msg += "\n<b>Type</b> → Video"
                 if link:
                     buttons.url_button("🔗 View Video", link)
                 user_message = (
@@ -418,8 +418,8 @@ class TaskListener(TaskConfig):
         elif self.is_leech:
             msg += f"\n<b>Total Files: </b>{folders}"
             if mime_type != 0:
-                msg += f"\n┠ <b>Corrupted Files</b> → {mime_type}"
-            msg += f"\n┖ <b>Task By</b> → {self.tag}\n\n"
+                msg += f"\n<b>Corrupted Files</b> → {mime_type}"
+            msg += f"\n<b>Task By</b> → {self.tag}\n\n"
 
             if self.bot_pm:
                 pmsg = msg
@@ -443,7 +443,7 @@ class TaskListener(TaskConfig):
                         if chat_id.isdigit():
                             chat_id = f"-100{chat_id}"
                         flink = f"https://t.me/{TgClient.BNAME}?start={encode_slink('file' + chat_id + '&&' + msg_id)}"
-                        fmsg += f"\n┖ <b>Get Media</b> → <a href='{flink}'>Store Link</a> | <a href='https://t.me/share/url?url={flink}'>Share Link</a>"
+                        fmsg += f"\n<b>Get Media</b> → <a href='{flink}'>Store Link</a> | <a href='https://t.me/share/url?url={flink}'>Share Link</a>"
                     fmsg += "\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
                         await send_message(log_chat, msg + fmsg)
@@ -452,10 +452,10 @@ class TaskListener(TaskConfig):
                 if fmsg != "":
                     await send_message(log_chat, msg + fmsg)
         else:
-            msg += f"\n│\n┟ <b>Type</b> → {mime_type}"
+            msg += f"\n<b>Type</b> → {mime_type}"
             if mime_type == "Folder":
-                msg += f"\n┠ <b>SubFolders</b> → {folders}"
-                msg += f"\n┠ <b>Files</b> → {files}"
+                msg += f"\n<b>SubFolders</b> → {folders}"
+                msg += f"\n<b>Files</b> → {files}"
             if (
                 link
                 or rclone_path
@@ -488,10 +488,10 @@ class TaskListener(TaskConfig):
                             buttons.url_button("🌐 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\n┃\n┠ Path: <code>{rclone_path}</code>"
+                msg += f"\nPath: <code>{rclone_path}</code>"
                 button = None
-            msg += f"\n┃\n┖ <b>Task By</b> → {self.tag}\n\n"
-            msg += f"\n\nPath: <code>{rclone_path}</code>"
+            msg += f"\n\n<b>Task By</b> → {self.tag}\n\n"
+            msg += f"Path: <code>{rclone_path}</code>"
             group_msg = (
                 msg + "〶 <b><u>Action Performed :</u></b>\n"
                 "⋗ <i>Cloud link(s) have been sent to User PM</i>\n\n"
