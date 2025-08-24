@@ -491,7 +491,7 @@ class TaskListener(TaskConfig):
                 msg += f"\nPath: <code>{rclone_path}</code>"
                 button = None
             msg += f"\n\n<b>Task By</b> → {self.tag}\n\n"
-            msg += f"Path: <code>{rclone_path}</code>"
+            msg += f"Path: <code>{rclone_path}</code>\n"
             group_msg = (
                 msg + "〶 <b><u>Action Performed :</u></b>\n"
                 "⋗ <i>Cloud link(s) have been sent to User PM</i>\n\n"
